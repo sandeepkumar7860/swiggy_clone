@@ -3,11 +3,20 @@ from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.http import HttpResponse, JsonResponse
 from .models import Restaurant, MenuItem
 from .forms import LoginForm, RegistrationForm
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+def health_check(request):
+    """Simple health check endpoint"""
+    return JsonResponse({
+        'status': 'ok',
+        'restaurants': Restaurant.objects.filter(is_active=True).count(),
+        'message': 'Swiggy Clone is running!'
+    })
 
 
 def login_register_view(request):

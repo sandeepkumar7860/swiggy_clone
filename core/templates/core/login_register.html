@@ -1,0 +1,374 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .auth-container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .tab-content {
+        max-height: 600px;
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+
+    .tab-content::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .tab-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .tab-content::-webkit-scrollbar-thumb {
+        background: #fc8019;
+        border-radius: 3px;
+    }
+
+    .tab-content::-webkit-scrollbar-thumb:hover {
+        background: #e67e12;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #e8e8e8;
+    }
+
+    .tab-btn {
+        padding: 12px 20px;
+        background: none;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        color: #999;
+        font-weight: 500;
+        transition: all 0.3s;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+    }
+
+    .tab-btn.active {
+        color: #fc8019;
+        border-bottom-color: #fc8019;
+    }
+
+    .tab-btn:hover {
+        color: #fc8019;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 500;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #fc8019;
+        box-shadow: 0 0 0 3px rgba(252, 128, 25, 0.1);
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background: #fc8019;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .btn-submit:hover {
+        background: #e67e12;
+    }
+
+    .help-text {
+        font-size: 12px;
+        color: #999;
+        margin-top: 4px;
+    }
+
+    .errorlist {
+        color: #dc3545;
+        font-size: 13px;
+        margin: 5px 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .errorlist li {
+        margin: 3px 0;
+    }
+
+    .form-group.error .form-control {
+        border-color: #dc3545;
+    }
+
+    .divider {
+        text-align: center;
+        margin: 20px 0;
+        color: #999;
+        font-size: 14px;
+    }
+
+    .register-prompt {
+        text-align: center;
+        margin-top: 20px;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .register-prompt button {
+        background: none;
+        border: none;
+        color: #fc8019;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .messages {
+        margin-bottom: 20px;
+    }
+
+    .alert {
+        padding: 12px 15px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+
+<div class="auth-container">
+    <h2 style="text-align: center; color: #fc8019; margin-bottom: 30px;">Swiggy</h2>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="tabs">
+        <button class="tab-btn {% if active_tab == 'login' %}active{% endif %}" onclick="switchTab('login')">
+            Login
+        </button>
+        <button class="tab-btn {% if active_tab == 'register' %}active{% endif %}" onclick="switchTab('register')">
+            Register
+        </button>
+    </div>
+
+    <!-- Login Tab -->
+    <div id="login" class="tab-content {% if active_tab == 'login' %}active{% endif %}">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="login">
+
+            <div class="form-group">
+                {{ login_form.username.label_tag }}
+                {{ login_form.username }}
+                {% if login_form.username.errors %}
+                <div class="errorlist">
+                    {% for error in login_form.username.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ login_form.password.label_tag }}
+                {{ login_form.password }}
+                {% if login_form.password.errors %}
+                <div class="errorlist">
+                    {% for error in login_form.password.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-submit">Login</button>
+        </form>
+
+        <div class="register-prompt">
+            Don't have an account? <button onclick="switchTab('register')">Register here</button>
+        </div>
+    </div>
+
+    <!-- Register Tab -->
+    <div id="register" class="tab-content {% if active_tab == 'register' %}active{% endif %}">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="register">
+
+            <h3 style="color: #333; margin-bottom: 15px; font-size: 16px;">Account Details</h3>
+
+            <div class="form-group">
+                {{ register_form.username.label_tag }}
+                {{ register_form.username }}
+                {% if register_form.username.errors %}
+                <div class="errorlist">
+                    {% for error in register_form.username.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ register_form.password1.label_tag }}
+                {{ register_form.password1 }}
+                {% if register_form.password1.errors %}
+                <div class="errorlist">
+                    {% for error in register_form.password1.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ register_form.password2.label_tag }}
+                {{ register_form.password2 }}
+                {% if register_form.password2.errors %}
+                <div class="errorlist">
+                    {% for error in register_form.password2.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <h3 style="color: #333; margin: 20px 0 15px 0; font-size: 16px;">Delivery Address</h3>
+
+            <div class="form-group">
+                {{ register_form.address_line1.label_tag }}
+                {{ register_form.address_line1 }}
+                {% if register_form.address_line1.errors %}
+                <div class="errorlist">
+                    {% for error in register_form.address_line1.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ register_form.address_line2.label_tag }}
+                {{ register_form.address_line2 }}
+            </div>
+
+            <div class="form-group">
+                {{ register_form.city.label_tag }}
+                {{ register_form.city }}
+                {% if register_form.city.errors %}
+                <div class="errorlist">
+                    {% for error in register_form.city.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ register_form.pincode.label_tag }}
+                {{ register_form.pincode }}
+                {% if register_form.pincode.errors %}
+                <div class="errorlist">
+                    {% for error in register_form.pincode.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ register_form.phone.label_tag }}
+                {{ register_form.phone }}
+                {% if register_form.phone.errors %}
+                <div class="errorlist">
+                    {% for error in register_form.phone.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-submit">Create Account</button>
+        </form>
+
+        <div class="register-prompt">
+            Already have an account? <button onclick="switchTab('login')">Login here</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Remove active from all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName).classList.add('active');
+
+        // Activate clicked button
+        event.target.classList.add('active');
+    }
+</script>
+{% endblock %}

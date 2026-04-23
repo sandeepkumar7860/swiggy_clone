@@ -1,0 +1,55 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<h2>Checkout</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <h3>Order Summary</h3>
+    <table class="cart-table">
+        <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Total</th>
+        </tr>
+
+        {% for ci in items %}
+        <tr>
+            <td>{{ ci.menu_item.name }}</td>
+            <td>{{ ci.quantity }}</td>
+            <td>₹{{ ci.total_price }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Subtotal: ₹{{ subtotal }}</h3>
+
+    {% if user.addresses.exists %}
+    <p><strong>Shipping To:</strong> {{ user.addresses.first.line1 }}, {{ user.addresses.first.city }}</p>
+    {% else %}
+    <p style="color:red;">You must add an address in the Admin panel.</p>
+    {% endif %}
+
+    <button type="submit" class="place-btn">Place Order</button>
+</form>
+
+<style>
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+.cart-table th, .cart-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+.place-btn {
+    padding: 10px 20px;
+    background: #008000;
+    color: white;
+    border-radius: 5px;
+}
+</style>
+
+{% endblock %}

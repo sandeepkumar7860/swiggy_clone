@@ -1,0 +1,86 @@
+{% load static %}
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title> Swiggy </title>
+  <link rel="stylesheet" href="{% static 'core/style.css' %}">
+  <style>
+      /* --- Swiggy Header Styling --- */
+      header {
+          width: 100%;
+          background: white;
+          box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+          position: sticky;
+          top: 0;
+          z-index: 999;
+      }
+
+      header .container {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 15px 40px;
+      }
+
+      header h1 a {
+          text-decoration: none;
+          color: #fc8019;
+          font-size: 28px;
+          font-weight: 700;
+      }
+
+      nav a {
+          text-decoration: none;
+          font-size: 18px;
+          margin-left: 25px;
+          color: #333;
+          font-weight: 500;
+      }
+
+      nav a:hover {
+          color: #fc8019;
+      }
+      .footer {         /* Dark background */
+    color: rgb(10, 0, 0);              /* White text */
+    text-align: center;        /* Center text */
+    padding: 15px 0;           /* Vertical padding */
+    position: relative;        /* Footer stays at bottom of page content */
+    margin-top: 40px;
+    font-size: 14px;
+}
+
+.footer p {
+    margin: 0;
+}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1><a href="{% url 'core:home' %}" style="color: rgb(21, 12, 1);"> Swiggy</a></h1>
+      <nav>
+        {% if user.is_authenticated %}
+          <a href="{% url 'core:cart' %}"style="color: rgb(21, 12, 1);">Cart</a> |
+          <a href="{% url 'core:order_history' %}"style="color: rgb(21, 12, 1);">Orders</a> |
+          <a href="{% url 'core:logout' %}"style="color: rgb(21, 12, 1);">Logout</a>
+        {% else %}
+          <a href="{% url 'core:login' %}">Login / Register</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    {% block content %}
+    {% endblock %}
+  </main>
+ 
+
+  <footer class="footer">
+    <div class="container">
+        <p>© 2025 Swiggy . All rights reserved.</p>
+    </div>
+</footer>
+</body>
+</html>
